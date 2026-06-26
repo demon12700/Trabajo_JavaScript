@@ -4,7 +4,7 @@ const CambiosSchema = new mongoose.Schema({
     tipo: {
         type: String,
         required: true
-        // Ej: Auto, Moto, Camion.
+        //Cambio, Informacion, Arreglo.
     },
     parte: {
         type: String,
@@ -13,6 +13,7 @@ const CambiosSchema = new mongoose.Schema({
     detalles: {
         type: String,
         required: true
+        //ej: Se encontro una pieza del auto en mal estado, se cambio por uno nuevo.
     },
     encargado: {
         type: String,

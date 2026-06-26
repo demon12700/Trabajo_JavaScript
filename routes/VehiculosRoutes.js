@@ -1,5 +1,5 @@
 import express from "express";
-import Persona from "../models/Vehiculo.js";
+import Vehiculo from "../models/Vehiculo.js";
 
 import {
     crearVehiculo,
@@ -19,7 +19,8 @@ router.get("/api", async (req, res) => {
         res.json(Vehiculos);
     } catch (error) {
         res.status(500).json({
-            mensaje: "Error al obtener Vehiculos..."
+            mensaje: "Error al obtener Vehiculos...",
+            error: error.message
         });
     }
 });

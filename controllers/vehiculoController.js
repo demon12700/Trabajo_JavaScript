@@ -10,7 +10,7 @@ const crearVehiculo = async (req, res) => {
         const VehiculoGuardado = await nuevoVehiculo.save();
         res.status(201).json(VehiculoGuardado);
     } catch (error) {
-        res.status(500).json({ mensaje: "Error al crear el Vehiculo..." });
+        res.status(500).json({ mensaje: "Error al crear el Vehiculo...", error: error.message});
     }
 };
 
@@ -36,7 +36,7 @@ const obtenerVehiculoPorID = async (req, res) => {
         }
         res.json(vehiculoEncontrado);
     } catch (error) {
-        res.status(500).json({ mensaje: "Error al buscar Vehiculo en la base de datos..." });
+        res.status(500).json({ mensaje: "Error al buscar Vehiculo en la base de datos...", error: error.message });
     }
 };
 
@@ -55,7 +55,7 @@ const actualizarVehiculo = async (req, res) => {
 
         res.json(VehiculoActualizado);
     } catch (error) {
-        res.status(500).json({ mensaje: "Error al intentar actualizar Vehiculo..." });
+        res.status(500).json({ mensaje: "Error al intentar actualizar Vehiculo...", error: error.message });
     }
 };
 
@@ -77,7 +77,7 @@ const eliminarVehiculo = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ mensaje: "Error al eliminar el Vehiculo" });
+        res.status(500).json({ mensaje: "Error al eliminar el Vehiculo",  });
     }
 };
 

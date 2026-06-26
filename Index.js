@@ -7,8 +7,10 @@ import VehiculosRoutes from "./routes/VehiculosRoutes.js";
 dotenv.config()
 
 const PORT = process.env.PORT || 3000;
-
 const app = express()
+
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true }));
 
 try {
 
@@ -28,5 +30,5 @@ try {
   app.listen(PORT, () => {
   
     console.log(`Servidor corriendo en puerto ${PORT}`);
-  
+
   });

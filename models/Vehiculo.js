@@ -4,6 +4,7 @@ const vehiculoSchema = new mongoose.Schema({
     tipo: {
         type: String,
         required: true
+        // Ej: Auto, Moto, Camion.
     },
     modelo: {
         type: String,
