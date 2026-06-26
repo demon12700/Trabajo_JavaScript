@@ -1,0 +1,32 @@
+import express from "express";
+import Persona from "../models/Vehiculo.js";
+
+import {
+    crearVehiculo,
+    obtenerVehiculos,
+    obtenerVehiculoPorID,
+    actualizarVehiculo,
+    eliminarVehiculo
+} from "../controllers/vehiculoController.js"
+
+
+const router = express.Router();
+
+router.get("/", obtenerVehiculos);
+router.get("/api", async (req, res) => {
+    try {
+        const Vehiculos = await Vehiculo.find(); // Busca todos los documentos de la colección
+        res.json(Vehiculos);
+    } catch (error) {
+        res.status(500).json({
+            mensaje: "Error al obtener Vehiculos..."
+        });
+    }
+});
+
+router.get("/:id", obtenerVehiculoPorID);
+router.post("/", crearVehiculo);
+router.put("/:id", actualizarVehiculo);
+router.delete("/:id", eliminarVehiculo);
+
+export default router;
