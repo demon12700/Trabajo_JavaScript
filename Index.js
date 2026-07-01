@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 
 import { conectarDB } from "./config/db.js";
 import VehiculosRoutes from "./routes/VehiculosRoutes.js";
+import CambiosRoutes from "./routes/CambiosRoutes.js";
 
 dotenv.config()
 
@@ -22,7 +23,7 @@ try {
   
   }
   app.use("/vehiculos", VehiculosRoutes);
-
+  app.use("/cambios", CambiosRoutes);
   // =======================
   // Inicio del servidor
   // =======================

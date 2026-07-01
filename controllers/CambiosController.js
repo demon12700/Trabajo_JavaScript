@@ -6,11 +6,19 @@ import Vehiculo from "../models/Vehiculo.js";
 const crearCambios = async (req, res) => {
     try {
         console.log("Crear Cambios", req.body);
+        const {tipo, cambio, detalles, encargado, placa} = req.body;
+        if (!placa) {
+            return res.status(400).json({mensaje: "La placa del vehiculo es requerido para crear un cambio..."});
+        }
+        const vehiculoExistente = await Vehiculo.findOne({placa: placa});
+        if (!vehiculoExistente) {
+            return res.status(404).json({mensaje: "No se encontró un vehiculo con la placa proporcionada..."});
+        }
         const nuevoCambios = new Cambios(req.body);
         const CambiosGuardados = await nuevoCambios.save();
         res.status(201).json(CambiosGuardados);
     } catch (error) {
-        res.status(500).json({mensaje: "Error al crear el Cambio...", error: error.message});
+        res.status(500).json({ mensaje: "Error al crear el cambio...", error: error.message });
     }
 }
 
@@ -18,11 +26,15 @@ const crearCambios = async (req, res) => {
 
 const obtenerCambiosPorVehiculo = async (req, res) => {
     try {
-        const cambiosEncontrados = await Cambios.find({ vehiculo: req.params.placa });
-        if (!cambiosEncontrados || cambiosEncontrados.length === 0) {
-            return res.status(404).json({ mensaje: "No se encontraron cambios en tal Vehiculo..." });
+        vehiculoExistente = await Vehiculo.findOne({placa: req.params.placa});
+        if (!vehiculoExistente) {
+            return res.status(404).json({mensaje: "No se encontró un vehiculo con la placa proporcionada..."});
         }
-        res.status(200).json(cambiosEncontrados);
+        const CambiosEncontrados = await Cambios.find({placa: req.params.placa});
+        res.status(200).json(CambiosEncontrados);
+        if (CambiosEncontrados.length === 0) {
+            return res.status(404).json({ mensaje: "No se encontraron cambios para este vehiculo..." });
+        }
     } catch (error) {
         res.status(500).json({ mensaje: "Error al obtener los cambios...", error: error.message });
     }
@@ -32,8 +44,12 @@ const obtenerCambiosPorVehiculo = async (req, res) => {
 
 const eliminarCambiosPorVehiculo = async (req, res) => {
     try {
-        const cambiosEliminados = await Cambios.deleteMany({ vehiculo: req.params.placa });
-        if (cambiosEliminados.deletedCount === 0) {
+        vehiculoExistente = await Vehiculo.findOne({placa: req.params.placa});
+        if (!vehiculoExistente) {
+            return res.status(404).json({mensaje: "No se encontró un vehiculo con la placa proporcionada..."});
+        }
+        const CambiosEliminados = await Cambios.deleteMany({placa: req.params.placa});
+        if (CambiosEliminados.deletedCount === 0) {
             return res.status(404).json({ mensaje: "No se encontraron cambios para eliminar en el Vehiculo..." });
         }
         res.status(200).json({ mensaje: "Cambios eliminados exitosamente..." });
