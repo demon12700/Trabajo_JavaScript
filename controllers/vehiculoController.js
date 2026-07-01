@@ -30,7 +30,7 @@ const obtenerVehiculos = async (req, res) => {
 //Buscar POR ID
 const obtenerVehiculoPorID = async (req, res) => {
     try {
-        const vehiculoEncontrado = await Vehiculo.findById(req.params.id);
+        const vehiculoEncontrado = await Vehiculo.findOne({ placa: req.params.placa });
         if (!vehiculoEncontrado) {
             return res.status(404).json({ mensaje: "Vehiculo no encontrado en la base de datos..." });
         }
@@ -43,8 +43,8 @@ const obtenerVehiculoPorID = async (req, res) => {
 // ACTUALIZAR
 const actualizarVehiculo = async (req, res) => {
     try {
-        const VehiculoActualizado = await Vehiculo.findByIdAndUpdate(
-            req.params.id,
+        const VehiculoActualizado = await Vehiculo.findOneAndUpdate(
+            { placa: req.params.placa },
             req.body,
             { new: true }
         );
@@ -62,14 +62,14 @@ const actualizarVehiculo = async (req, res) => {
 // ELIMINAR
 const eliminarVehiculo = async (req, res) => {
     try {
-        const vehiculoEliminado = await Vehiculo.findByIdAndDelete(req.params.id);
+        const vehiculoEliminado = await Vehiculo.findOneAndDelete({ placa: req.params.placa });
         
         if (!vehiculoEliminado) {
             return res.status(404).json({ mensaje: "El vehículo no existe." });
         }
 
         if (Eliminar_Cambios === true){
-            await Cambios.deleteMany({ placa: req.params.id });
+            await Cambios.deleteMany({ placa: vehiculoEliminado._id });
         }
         
         res.json({

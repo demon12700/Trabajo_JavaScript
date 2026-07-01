@@ -25,9 +25,9 @@ router.get("/api", async (req, res) => {
     }
 });
 
-router.get("/:id", obtenerVehiculoPorID);
+router.get("/:placa", obtenerVehiculoPorID);
 router.post("/", crearVehiculo);
-router.put("/:id", actualizarVehiculo);
-router.delete("/:id", eliminarVehiculo);
+router.put("/:placa", actualizarVehiculo);
+router.delete("/:placa", eliminarVehiculo);
 
 export default router;
