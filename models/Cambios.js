@@ -4,7 +4,7 @@ const CambiosSchema = new mongoose.Schema({
     tipo: {
         type: String,
         required: true
-        //Cambio, Informacion, Arreglo.
+        //Cambio, Arreglo.
     },
     parte: {
         type: String,
