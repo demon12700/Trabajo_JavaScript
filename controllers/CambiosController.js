@@ -5,19 +5,25 @@ import Vehiculo from "../models/Vehiculo.js";
 
 const crearCambios = async (req, res) => {
     try {
-        console.log("Crear Cambios", req.body);
-        const {tipo, cambio, detalles, encargado, placa} = req.body;
+        const { tipo, parte, detalles, encargado, placa } = req.body;
+        
         if (!placa) {
-            return res.status(400).json({mensaje: "La placa del vehiculo es requerido para crear un cambio..."});
+            return res.status(400).json({ mensaje: "La placa del vehiculo es requerido para crear un cambio..." });
         }
-        const vehiculoExistente = await Vehiculo.findOne({placa: placa});
+        const vehiculoExistente = await Vehiculo.findOne({ placa: placa });
         if (!vehiculoExistente) {
-            return res.status(404).json({mensaje: "No se encontró un vehiculo con la placa proporcionada..."});
+            return res.status(404).json({ mensaje: "No se encontró un vehiculo con la placa proporcionada..." });
         }
-        const nuevoCambios = new Cambios(req.body);
-        const CambiosGuardados = await nuevoCambios.save();
-        res.status(201).json(CambiosGuardados);
-    } catch (error) {
+        const nuevoCambio = new Cambios({
+            tipo,
+            parte,
+            detalles,
+            encargado,
+            placa: vehiculoExistente._id
+        })
+        const cambiosGuardados = await nuevoCambio.save();
+        res.status(201).json(cambiosGuardados);
+    }catch (error) {
         res.status(500).json({ mensaje: "Error al crear el cambio...", error: error.message });
     }
 }
@@ -26,15 +32,15 @@ const crearCambios = async (req, res) => {
 
 const obtenerCambiosPorVehiculo = async (req, res) => {
     try {
-        vehiculoExistente = await Vehiculo.findOne({placa: req.params.placa});
-        if (!vehiculoExistente) {
-            return res.status(404).json({mensaje: "No se encontró un vehiculo con la placa proporcionada..."});
+        const VehiculoExistente = await Vehiculo.findOne({ placa: req.params.placa});
+        if (!VehiculoExistente) {
+            return res.status(404).json({ mensaje: "No se encontró un vehiculo con la placa proporcionada..." });
         }
-        const CambiosEncontrados = await Cambios.find({placa: req.params.placa});
-        res.status(200).json(CambiosEncontrados);
-        if (CambiosEncontrados.length === 0) {
-            return res.status(404).json({ mensaje: "No se encontraron cambios para este vehiculo..." });
+        const cambiosEncontrados = await Cambios.find({ placa: VehiculoExistente._id});
+        if (cambiosEncontrados.length === 0) {
+            return res.status(404).json({ mensaje: "No se encontraron cambios para el vehiculo con la placa proporcionada..." });
         }
+        res.status(200).json(cambiosEncontrados);
     } catch (error) {
         res.status(500).json({ mensaje: "Error al obtener los cambios...", error: error.message });
     }
@@ -44,21 +50,18 @@ const obtenerCambiosPorVehiculo = async (req, res) => {
 
 const eliminarCambiosPorVehiculo = async (req, res) => {
     try {
-        vehiculoExistente = await Vehiculo.findOne({placa: req.params.placa});
-        if (!vehiculoExistente) {
-            return res.status(404).json({mensaje: "No se encontró un vehiculo con la placa proporcionada..."});
+        const VehiculoExistente = await Vehiculo.findOne({ placa: req.params.placa});
+        if (!VehiculoExistente) {
+            return res.status(404).json({ mensaje: "No se encontró un vehiculo con la placa proporcionada..." });
         }
-        const CambiosEliminados = await Cambios.deleteMany({placa: req.params.placa});
-        if (CambiosEliminados.deletedCount === 0) {
-            return res.status(404).json({ mensaje: "No se encontraron cambios para eliminar en el Vehiculo..." });
-        }
-        res.status(200).json({ mensaje: "Cambios eliminados exitosamente..." });
+        const cambiosEliminados = await Cambios.deleteMany({ placa: VehiculoExistente._id});
+        res.status(200).json({ mensaje: "Cambios eliminados correctamente", cambiosEliminados });
     } catch (error) {
         res.status(500).json({ mensaje: "Error al eliminar los cambios...", error: error.message });
     }
 }
 
-//Eportar funciones Controller
+//Exportar funciones Controller
 
 export {
     crearCambios,
