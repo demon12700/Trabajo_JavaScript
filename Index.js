@@ -10,6 +10,9 @@ dotenv.config()
 const PORT = process.env.PORT || 3000;
 const app = express()
 
+app.set("view engine", "pug");
+app.set("views", "./views");
+
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
 

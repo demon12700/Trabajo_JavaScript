@@ -13,6 +13,17 @@ import {
 const router = express.Router();
 
 router.get("/", obtenerVehiculos);
+router.get("/agregar", async (req, res) => {
+    try {
+        const VehiculosExistentes = await Vehiculo.find();
+        
+        res.render("AgregarDatos", {
+            listaVehiculos: VehiculosExistentes
+        });
+    } catch (error) {
+        res.status(500).send("Error al cargar la página de registro");
+    }
+});
 router.get("/api", async (req, res) => {
     try {
         const Vehiculos = await Vehiculo.find(); // Busca todos los documentos de la colección

@@ -23,6 +23,7 @@ const crearCambios = async (req, res) => {
         })
         const cambiosGuardados = await nuevoCambio.save();
         res.status(201).json(cambiosGuardados);
+        res.redirect("/vehiculos");
     }catch (error) {
         res.status(500).json({ mensaje: "Error al crear el cambio...", error: error.message });
     }

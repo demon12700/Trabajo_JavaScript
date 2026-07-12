@@ -9,18 +9,36 @@ const crearVehiculo = async (req, res) => {
         const nuevoVehiculo = new Vehiculo(req.body);
         const VehiculoGuardado = await nuevoVehiculo.save();
         res.status(201).json(VehiculoGuardado);
+        res.redirect("/vehiculos");
     } catch (error) {
         res.status(500).json({ mensaje: "Error al crear el Vehiculo...", error: error.message});
     }
 };
 
 //LEER TODOS
+//LEER TODOS
 const obtenerVehiculos = async (req, res) => {
     try {
-        const Vehiculos = await Vehiculo.find();
-        res.render("index", {
+        const todosLosVehiculos = await Vehiculo.find();
+        const placaQuery = req.query.placa;
+        let autoSeleccionado = null;
+        let cambiosEncontrados = [];
+
+        if (placaQuery) {
+            autoSeleccionado = await Vehiculo.findOne({ placa: placaQuery });
+            if (autoSeleccionado) {
+                // Busca en la Vehiculos y selecciona uno.
+                cambiosEncontrados = await Cambios.find({ placa: autoSeleccionado._id });
+            }
+        }
+
+        // CAMBIO AQUÍ: Enviamos 'listaVehiculos' en lugar de 'Vehiculos' para evitar el conflicto de nombres con Pug
+        res.render("Vehiculos", {
             usuario: req.usuario || "Invitado",
-            Vehiculos: Vehiculos
+            listaVehiculos: todosLosVehiculos, 
+            placaSeleccionada: placaQuery || "",
+            autoSeleccionado: autoSeleccionado,
+            cambios: cambiosEncontrados
         });
     } catch (error) {
         res.status(500).send("Error al cargar los Vehiculos");

@@ -1,0 +1,80 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Vista de Vehiculos
+    style.
+      body { font-family: 'Segoe UI', Arial, sans-serif; margin: 40px; background-color: #f4f6f9; color: #333; }
+      .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+      h1, h2 { color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 8px; }
+      .filter-section { background: #ebf3f9; padding: 20px; border-radius: 6px; margin-bottom: 30px; border-left: 5px solid #3498db; }
+      label { font-weight: bold; display: block; margin-bottom: 8px; color: #2c3e50; }
+      select { width: 100%; padding: 12px; border-radius: 4px; border: 1px solid #bdc3c7; font-size: 16px; background-color: white; }
+      table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; }
+      th, td { border: 1px solid #e0e0e0; padding: 12px; text-align: left; }
+      th { background-color: #34495e; color: white; font-weight: 600; }
+      tr:nth-child(even) { background-color: #f8f9fa; }
+      .no-data { color: #7f8c8d; font-style: italic; text-align: center; padding: 20px; background: #fafafa; border: 1px dashed #ccc; border-radius: 4px; }
+      .badge { display: inline-block; padding: 4px 8px; background: #e67e22; color: white; border-radius: 4px; font-size: 12px; font-weight: bold; }
+
+  body
+    div(class="container")
+      h1 Gestión de Taller Ferretería
+      p Bienvenido, <strong>#{usuario}</strong>
+
+      //- SECCIÓN DE FILTRADO (Selector de Autos por Placa)
+      div(class="filter-section")
+        form(method="GET" action="/vehiculos")
+          label(for="select-placa") 🚗 Seleccionar vehículo por Placa para ver Historial:
+          select(id="select-placa" name="placa" onchange="this.form.submit()")
+            option(value="") -- Selecciona una placa --
+            if listaVehiculos && listaVehiculos.length > 0
+              each auto in listaVehiculos
+                if auto.placa == placaSeleccionada
+                  option(value=auto.placa selected) #{auto.placa} - #{auto.tipo} #{auto.modelo} (#{auto.color})
+                else
+                  option(value=auto.placa) #{auto.placa} - #{auto.tipo} #{auto.modelo} (#{auto.color})
+            else
+              option(value="" disabled) No hay vehículos registrados
+
+      //- SECCIÓN DETALLES DEL AUTO SELECCIONADO
+      if autoSeleccionado
+        h2 📋 Vehículo Seleccionado
+        table
+          thead
+            tr
+              th Tipo
+              th Modelo
+              th Color
+              th Placa
+          tbody
+            tr
+              td #{autoSeleccionado.tipo}
+              td #{autoSeleccionado.modelo}
+              td #{autoSeleccionado.color}
+              td <strong>#{autoSeleccionado.placa}</strong>
+
+        //- SECCIÓN DE CAMBIOS / HISTORIAL
+        h2 Historial de Cambios y Arreglos
+        if cambios && cambios.length > 0
+          table
+            thead
+              tr
+                th Tipo
+                th Parte / Componente
+                th Detalles del Trabajo
+                th Encargado
+            tbody
+              each cambio in cambios
+                tr
+                  td
+                    span(class="badge") #{cambio.tipo}
+                  td #{cambio.parte}
+                  td #{cambio.detalles}
+                  td #{cambio.encargado}
+        else
+          p(class="no-data") ℹ️ El vehículo no registra ningún mantenimiento o cambio de piezas todavía.
+      
+      else
+        p(class="no-data") 💡 Selecciona una placa en el menú superior para desplegar su historial completo de reparaciones.
