@@ -1,0 +1,29 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Bienvenido - Sistema de Vehículos
+    link(rel="stylesheet", href="/styles.css")
+
+  body
+    header.main-header
+      h1 Sistema de Gestión
+      nav.navbar
+        a.btn-logout(href="/logout") Cerrar Sesión
+
+    main.container
+      section.welcome-box
+        //- Usamos el nombre del usuario logueado de la base de datos
+        h2 ¡Hola, #{usuario.nombre}! 
+        p Has ingresado correctamente al sistema. Desde aquí puedes comenzar a administrar tus vehículos y registros asociados de manera segura.
+        
+        br
+        
+        .dashboard-shortcuts
+          a.btn-primary(href="/personas") Gestionar Personas
+          | 
+          a.btn-primary(href="/vehiculos") Gestionar Vehículos
+
+    footer
+      p &copy; 2026 - Sistema de Control de Vehículos
