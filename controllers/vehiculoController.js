@@ -99,10 +99,53 @@ const eliminarVehiculo = async (req, res) => {
     }
 };
 
+const mostrarFormularioEditar = async (req, res) => {
+    try {
+        const vehiculoEncontrado = await Vehiculo.findOne({ placa: req.params.placa });
+        
+        if (!vehiculoEncontrado) {
+            return res.redirect("/vehiculos");
+        }
+
+        res.render("EditarVehiculo", { 
+            vehiculo: vehiculoEncontrado 
+        });
+    } catch (error) {
+        res.status(500).send("Error al cargar el formulario de edición");
+    }
+};
+
+const actualizarVehiculoWeb = async (req, res) => {
+    const placaParam = req.params.placa;
+    try {
+        const VehiculoActualizado = await Vehiculo.findOneAndUpdate(
+            { placa: placaParam },
+            req.body,
+            { new: true }
+        );
+
+        if (!VehiculoActualizado) {
+            return res.render("EditarVehiculo", {
+                vehiculo: { placa: placaParam, ...req.body },
+                error: "Vehiculo no encontrado para actualizar"
+            });
+        }
+
+        res.redirect("/vehiculos");
+    } catch (error) {
+        res.render("EditarVehiculo", {
+            vehiculo: { placa: placaParam, ...req.body },
+            error: "Error al intentar actualizar el Vehiculo: " + error.message
+        });
+    }
+};
+
 export {
     crearVehiculo,
     obtenerVehiculos,
     obtenerVehiculoPorID,
     actualizarVehiculo,
-    eliminarVehiculo
+    eliminarVehiculo,
+    mostrarFormularioEditar,
+    actualizarVehiculoWeb
 };

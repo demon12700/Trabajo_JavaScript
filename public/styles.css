@@ -1,44 +1,105 @@
-/* Estilos generales */
-body {
+/* ==========================================
+   1. ESTILOS GENERALES Y ESTRUCTURA DE PÁGINA
+   ========================================== */
+   * {
+    box-sizing: border-box;
+  }
+  
+  body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f3f4f6;
     color: #1f2937;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
     margin: 0;
-    padding: 20px;
-    box-sizing: border-box;
+    padding: 0;
   }
   
-  /* Encabezado */
-  header {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  header h1 {
-    margin: 0;
+  /* Encabezados */
+  h1, h2 {
     color: #111827;
-    font-size: 28px;
-    font-weight: 700;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 8px;
+    margin-top: 20px;
   }
   
-  /* Formulario contenedor */
-  form {
-    background-color: #ffffff;
+  /* Contenedor adaptativo según la vista */
+  .container {
+    width: 100%;
+    max-width: 800px;
+    margin: 40px auto;
+    background: white;
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    width: 100%;
-    max-width: 360px;
-    box-sizing: border-box;
   }
   
-  /* Etiquetas y campos de entrada */
-  label {
+  body:has(table) .container {
+    max-width: 1000px;
+  }
+  
+  a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  p[style*="color: red"] {
+    color: #ef4444 !important;
+    font-weight: 500;
+  }
+  
+  /* ==========================================
+     2. NAVEGACIÓN Y COMPONENTES (Header / Footer)
+     ========================================== */
+  .main-header, header {
+    width: 100%;
+    background-color: #1f2937;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .main-header h1, header h1 {
+    margin: 0;
+    font-size: 24px;
+    border-bottom: none;
+    padding-bottom: 0;
+    color: white;
+  }
+  
+  footer {
+    margin-top: auto;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    color: #6b7280;
+    font-size: 14px;
+    background-color: #ffffff;
+    border-top: 1px solid #e5e7eb;
+  }
+  
+  /* ==========================================
+     3. FORMULARIOS DENTRO DE .CONTAINER (Altas / Edición)
+     ========================================== */
+  .container form {
+    margin-bottom: 25px;
+    width: 100%;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .container label {
     display: block;
     margin-bottom: 6px;
     font-weight: 600;
@@ -46,74 +107,174 @@ body {
     color: #4b5563;
   }
   
-  input {
+  .container input[type="text"],
+  .container input[type="email"],
+  .container input[type="password"],
+  .container select,
+  .container textarea {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #d1d5db;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 15px;
     color: #111827;
-    box-sizing: border-box;
+    background-color: white;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
   
-  input:focus {
+  .container textarea {
+    resize: vertical;
+    height: 80px;
+  }
+  
+  .container input:focus, 
+  .container select:focus, 
+  .container textarea:focus {
     outline: none;
     border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
   }
   
-  /* Botón de acción */
-  button {
-    width: 100%;
-    padding: 12px;
-    background-color: #2563eb;
-    color: #ffffff;
+  /* ==========================================
+     4. FORMULARIOS SUELTOS (Login y Registro Originales)
+     ========================================== */
+  /* Reglas específicas aplicadas sólo a formularios que NO están en .container */
+  body > form {
+    margin: 20px 30px;
+    width: auto;
+  }
+  
+  body > form label {
+    font-weight: bold;
+    margin-right: 10px;
+    color: #34495e;
+  }
+  
+  body > form input {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #bdc3c7;
+    font-size: 14px;
+  }
+  
+  /* ==========================================
+     5. BOTONES Y ACCIONES
+     ========================================== */
+  /* Botón por defecto para Login y Registro */
+  body > form button[type="submit"] {
+    background-color: #2c3e50;
+    color: white;
     border: none;
-    border-radius: 6px;
+    padding: 10px 20px;
+    border-radius: 4px;
     font-size: 15px;
-    font-weight: 600;
     cursor: pointer;
+    font-weight: bold;
     transition: background-color 0.2s;
   }
   
-  button:hover {
-    background-color: #1d4ed8;
+  body > form button[type="submit"]:hover {
+    background-color: #1a252f;
   }
   
-  button:active {
-    background-color: #1e40af;
+  /* Botón grande para formularios dentro de .container */
+  .container button[type="submit"], .btn-submit {
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 10px;
+    transition: background-color 0.2s;
   }
   
-  /* Mensajes de error */
-  p[style*="color: red"] {
-    background-color: #fee2e2;
-    border-left: 4px solid #ef4444;
-    color: #991b1b !important;
-    padding: 12px;
+  .container button[type="submit"]:hover, .btn-submit:hover {
+    background-color: #1a252f;
+  }
+  
+  .btn-primary {
+    display: inline-block;
+    background-color: #2563eb;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    margin-right: 10px;
+    margin-top: 5px;
+  }
+  
+  .btn-logout {
+    color: #fca5a5;
+    border: 1px solid #fca5a5;
+    padding: 6px 12px;
     border-radius: 4px;
     font-size: 14px;
+  }
+  
+  /* ==========================================
+     6. TABLAS Y SECCIONES DE FILTRADO
+     ========================================== */
+  .filter-section {
+    background: #f9fafb;
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 30px;
+    border-left: 5px solid #2563eb;
+  }
+  
+  table {
     width: 100%;
-    max-width: 360px;
-    box-sizing: border-box;
-    margin: 0 0 20px 0;
+    border-collapse: collapse;
+    margin-top: 15px;
+    margin-bottom: 30px;
+  }
+  
+  th, td {
+    border: 1px solid #e5e7eb;
+    padding: 12px;
     text-align: left;
   }
   
-  /* Enlaces inferiores de navegación */
-  p {
-    margin-top: 20px;
-    font-size: 14px;
-    color: #6b7280;
-    text-align: center;
-  }
-  
-  p a {
-    color: #2563eb;
-    text-decoration: none;
+  th {
+    background-color: #1f2937;
+    color: white;
     font-weight: 600;
   }
   
-  p a:hover {
-    text-decoration: underline;
+  tr:nth-child(even) {
+    background-color: #f9fafb;
+  }
+  
+  .no-data {
+    color: #6b7280;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+    background: #f3f4f6;
+    border: 1px dashed #d1d5db;
+    border-radius: 4px;
+  }
+  
+  .badge {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #f59e0b;
+    color: white;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+  /* ==========================================
+     7. VISTAS ESPECÍFICAS (Dashboard / Welcome)
+     ========================================== */
+  .welcome-box {
+    background-color: #f9fafb;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
   }

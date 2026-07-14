@@ -1,0 +1,40 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Editar Vehículo - Taller
+    link(rel="stylesheet", href="/styles.css")
+
+  body
+    div(class="container")
+      h1 ✏️ Editar Vehículo
+
+      //- Enviamos el formulario al endpoint con la placa actual
+      form(method="POST" action=`/vehiculos/editar/${vehiculo.placa}`)
+        
+        div(class="form-group")
+          label(for="tipo") Tipo de Vehículo:
+          select(id="tipo" name="tipo" required)
+            //- Validamos cuál opción debe aparecer como seleccionada
+            option(value="Auto" selected=vehiculo.tipo === 'Auto') Auto
+            option(value="Camioneta" selected=vehiculo.tipo === 'Camioneta') Camioneta
+            option(value="Camión" selected=vehiculo.tipo === 'Camión') Camión
+            option(value="Moto" selected=vehiculo.tipo === 'Moto') Moto
+        
+        div(class="form-group")
+          label(for="modelo") Modelo / Año:
+          input(type="text" id="modelo" name="modelo" value=vehiculo.modelo required)
+        
+        div(class="form-group")
+          label(for="color") Color:
+          input(type="text" id="color" name="color" value=vehiculo.color required)
+        
+        div(class="form-group")
+          label(for="placa") Placa (No editable si es tu clave única):
+          input(type="text" id="placa" name="placa" value=vehiculo.placa readonly)
+        
+        button(type="submit" class="btn-submit") Guardar Cambios
+        
+      br
+      a(href="/vehiculos") ⬅️ Cancelar y volver
