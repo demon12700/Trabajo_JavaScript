@@ -8,8 +8,9 @@ import {
     actualizarVehiculo,
     eliminarVehiculo,
     mostrarFormularioEditar,
-    actualizarVehiculoWeb
-} from "../controllers/vehiculoController.js";
+    actualizarVehiculoWeb,
+    mostrarFormularioEliminar
+} from "../controllers/System/vehiculoController.js";
 
 const router = express.Router();
 
@@ -38,11 +39,13 @@ router.get("/api", async (req, res) => {
     }
 });
 
+router.get("/eliminar/:placa", mostrarFormularioEliminar);
+router.post("/eliminar/:placa", eliminarVehiculo); 
 router.get("/editar/:placa", mostrarFormularioEditar);
 router.post("/editar/:placa", actualizarVehiculoWeb);
 router.get("/:placa", obtenerVehiculoPorID);
 router.post("/", crearVehiculo);
 router.put("/:placa", actualizarVehiculo);
-router.delete("/:placa", eliminarVehiculo);
+router.delete("/:placa", eliminarVehiculo); // Mantiene compatibilidad con tu API de pruebas
 
 export default router;

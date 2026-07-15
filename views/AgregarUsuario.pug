@@ -1,0 +1,38 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Registro - Usuario Externo
+    link(rel="stylesheet", href="/styles.css")
+
+  body
+    div(class="container")
+      header
+        h1 Registro de cuenta Usuario Externo
+
+      if error
+        p(style="color: red") #{error}
+
+      form(action="/usuarios/registro", method="POST")
+        div(class="form-group")
+          label Nombre:
+          input(type="text", name="nombre", required)
+
+        div(class="form-group")
+          label Teléfono:
+          input(type="text", name="telefono", required)
+
+        div(class="form-group")
+          label Email:
+          input(type="email", name="email", required)
+
+        div(class="form-group")
+          label Password:
+          input(type="password", name="password", required)
+
+        br
+        button(type="submit" class="btn-primary") Registrar cuenta de Usuario Externa
+        
+      br
+      a(href="/") ⬅️ Volver al Inicio

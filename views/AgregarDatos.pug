@@ -18,7 +18,7 @@ html(lang="es")
   body
     div(class="container")
 
-      h1 🚗 Registrar Nuevo Vehículo
+      h1 Registrar Nuevo Vehículo
       form(method="POST" action="/vehiculos")
         div(class="form-group")
           label(for="tipo") Tipo de Vehículo:
@@ -39,10 +39,14 @@ html(lang="es")
         div(class="form-group")
           label(for="placa") Placa (Única):
           input(type="text" id="placa" name="placa" placeholder="Ej: ABC123" required)
+
+        div(class="form-group")
+          label(for="email") Email de usuario:
+          input(type="text" id="usrEmail" name="usrEmail" placeholder="Ej: Fulano@gmail.com" required)
         
         button(type="submit" class="btn-submit") Guardar Vehículo
 
-      h2 🛠️ Registrar Cambio / Reparación
+      h2 Registrar Cambio / Reparación
       form(method="POST" action="/cambios")
         div(class="form-group")
           label(for="select-placa") Seleccionar Vehículo por Placa:

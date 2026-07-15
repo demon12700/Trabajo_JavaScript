@@ -1,5 +1,5 @@
-import Vehiculo from "../models/Vehiculo.js";
-import Cambios from "../models/Cambios.js";
+import Vehiculo from "../../models/Vehiculo.js";
+import Cambios from "../../models/Cambios.js";
 let Eliminar_Cambios = false
 
 //CREAR
@@ -8,14 +8,12 @@ const crearVehiculo = async (req, res) => {
         console.log("Crear Vehiculo", req.body);
         const nuevoVehiculo = new Vehiculo(req.body);
         const VehiculoGuardado = await nuevoVehiculo.save();
-        res.status(201).json(VehiculoGuardado);
         res.redirect("/vehiculos");
     } catch (error) {
         res.status(500).json({ mensaje: "Error al crear el Vehiculo...", error: error.message});
     }
 };
 
-//LEER TODOS
 //LEER TODOS
 const obtenerVehiculos = async (req, res) => {
     try {
@@ -32,7 +30,6 @@ const obtenerVehiculos = async (req, res) => {
             }
         }
 
-        // CAMBIO AQUÍ: Enviamos 'listaVehiculos' en lugar de 'Vehiculos' para evitar el conflicto de nombres con Pug
         res.render("Vehiculos", {
             usuario: req.usuario || "Invitado",
             listaVehiculos: todosLosVehiculos, 
@@ -80,22 +77,29 @@ const actualizarVehiculo = async (req, res) => {
 // ELIMINAR
 const eliminarVehiculo = async (req, res) => {
     try {
+        // Leemos si el usuario tildó el checkbox en el formulario de la web
+        const { borrarCambios } = req.body;
+        
+        // Si el checkbox vino marcado, seteamos Eliminar_Cambios a true, de lo contrario false
+        Eliminar_Cambios = (borrarCambios === "true");
+
         const vehiculoEliminado = await Vehiculo.findOneAndDelete({ placa: req.params.placa });
         
         if (!vehiculoEliminado) {
-            return res.status(404).json({ mensaje: "El vehículo no existe." });
-        }
-
-        if (Eliminar_Cambios === true){
-            await Cambios.deleteMany({ placa: vehiculoEliminado._id });
+            return res.status(404).render("eliminarVehiculo", {
+                error: "El vehículo no existe o ya fue eliminado."
+            });
         }
         
-        res.json({
-            mensaje: "Vehiculo ha sido eliminado..."
-        });
+        if (Eliminar_Cambios === true) {
+            await Cambios.deleteMany({ placa: vehiculoEliminado._id });
+        }
+        // Devolvemos el estado global a false para futuras peticiones
+        Eliminar_Cambios = false;
+        res.redirect("/vehiculos");
     } catch (error) {
         console.error(error);
-        res.status(500).json({ mensaje: "Error al eliminar el Vehiculo",  });
+        res.status(500).send("Error al eliminar el Vehiculo: " + error.message);
     }
 };
 
@@ -112,6 +116,22 @@ const mostrarFormularioEditar = async (req, res) => {
         });
     } catch (error) {
         res.status(500).send("Error al cargar el formulario de edición");
+    }
+};
+
+const mostrarFormularioEliminar = async (req, res) => {
+    try {
+        const vehiculoEncontrado = await Vehiculo.findOne({ placa: req.params.placa });
+        
+        if (!vehiculoEncontrado) {
+            return res.redirect("/vehiculos");
+        }
+
+        res.render("eliminarVehiculo", { 
+            vehiculo: vehiculoEncontrado 
+        });
+    } catch (error) {
+        res.status(500).send("Error al cargar el formulario de eliminación: " + error.message);
     }
 };
 
@@ -147,5 +167,6 @@ export {
     actualizarVehiculo,
     eliminarVehiculo,
     mostrarFormularioEditar,
-    actualizarVehiculoWeb
+    actualizarVehiculoWeb,
+    mostrarFormularioEliminar,
 };

@@ -7,8 +7,10 @@ import { Server } from "socket.io";
 import { conectarDB } from "./config/db.js";
 
 import CambiosRoutes from "./routes/CambiosRoutes.js";
+import userExRoutes from "./routes/userExRoutes.js";
 import VehiculosRoutes from "./routes/VehiculosRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+
 import { protegerRuta } from "./MiddleWares/AuthMiddleware.js";
 
 dotenv.config();
@@ -67,11 +69,13 @@ app.get("/", protegerRuta, (req, res) => {
 
 app.use("/", authRoutes);
 
+
 // =======================
 // Rutas del Negocio (Protegidas)
 // =======================
 app.use("/vehiculos", VehiculosRoutes);
 app.use("/cambios", CambiosRoutes);
+app.use("/usuarios", userExRoutes);
 
 // =======================
 // Inicio del servidor

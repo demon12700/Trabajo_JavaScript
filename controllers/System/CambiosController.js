@@ -1,5 +1,5 @@
-import Cambios from "../models/Cambios.js";
-import Vehiculo from "../models/Vehiculo.js";
+import Cambios from "../../models/Cambios.js";
+import Vehiculo from "../../models/Vehiculo.js";
 
 //CREAR
 
@@ -22,7 +22,6 @@ const crearCambios = async (req, res) => {
             placa: vehiculoExistente._id
         })
         const cambiosGuardados = await nuevoCambio.save();
-        res.status(201).json(cambiosGuardados);
         res.redirect("/vehiculos");
     }catch (error) {
         res.status(500).json({ mensaje: "Error al crear el cambio...", error: error.message });

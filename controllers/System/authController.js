@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import Usuario from "../models/Usuario.js";
+import Usuario from "../../models/Usuario.js";
 
 const mostrarLogin = (req, res) => {
   res.render("login", {

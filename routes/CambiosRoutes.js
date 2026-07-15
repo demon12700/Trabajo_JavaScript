@@ -6,7 +6,7 @@ import {
     obtenerCambiosPorVehiculo,
     eliminarCambiosPorVehiculo
 }
-from "../controllers/CambiosController.js"
+from "../controllers/System/CambiosController.js"
 
 const router = express.Router();
 

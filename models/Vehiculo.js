@@ -19,6 +19,12 @@ const vehiculoSchema = new mongoose.Schema({
         required: true,
         unique: true,
         index: true
+    }, 
+    usrEmail: {
+        type: String,
+        required: true,
+        unique: true,
+        index: true
     }
 });
 

@@ -5,7 +5,8 @@ import {
   registrarUsuario, 
   iniciarSesion, 
   cerrarSesion 
-} from "../controllers/authController.js"; // Ajusta la ruta a tu carpeta de controladores
+} from "../controllers/System/authController.js"; // Ajusta la ruta a tu carpeta de controladores
+
 
 const router = express.Router();
 
