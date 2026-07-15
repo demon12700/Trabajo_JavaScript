@@ -3,7 +3,7 @@ html(lang="es")
   head
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    title Bienvenido - Sistema de Vehículos
+    title Sistema de Taller mecánico
     link(rel="stylesheet", href="/styles.css")
 
   body
@@ -17,14 +17,21 @@ html(lang="es")
         //- Usamos el nombre del usuario logueado de la base de datos
         h2 ¡Hola, #{usuario.nombre}! 
         p Has ingresado correctamente al sistema. Desde aquí puedes comenzar a administrar tus vehículos y registros asociados de manera segura.
+
         
-        br
-        
+      section.dashboard
+        h3 Acciones Rápidas
         .dashboard-shortcuts
+        h2 Creacion de Usuarios y Vehículos
+        div
           a.btn-primary(href="/usuarios/registro") Crear Usuario Externo
-          a.btn-primary(href="/usuarios") Gestionar Personas
-          a.btn-primary(href="/vehiculos") Gestionar Vehículos
           a.btn-primary(href="/vehiculos/agregar") Añadir Vehiculos
+        div
+        h2 Gestion de Usuarios y Vehículos
+        div
+          a.btn-primary(href="/usuarios") Gestionar Usuarios Externos
+          a.btn-primary(href="/vehiculos") Gestionar Vehículos
+        div
 
     footer
-      p &copy; 2026 - Sistema de Control de Vehículos y Ussuarios.
+      p &copy; 2026 - Sistema de Control de Vehículos y Usuarios.
