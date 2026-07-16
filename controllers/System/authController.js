@@ -56,7 +56,7 @@ const iniciarSesion = async (req, res) => {
 
     if (!usuario || !usuario.validarPassword(password)) {
       return res.render("login", {
-        error: "Email o password incorrectos"
+        error: "Email o password incorrectos", error: error.message
       });
     }
 
