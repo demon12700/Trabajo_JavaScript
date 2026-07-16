@@ -80,7 +80,7 @@ const iniciarSesion = async (req, res) => {
     res.redirect("/");
   } catch (error) {
     res.render("login", {
-      error: "Error al iniciar sesion"
+      error: "Error al iniciar sesion", error: error.message
     });
   }
 };
