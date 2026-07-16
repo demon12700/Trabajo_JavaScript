@@ -43,7 +43,7 @@ const registrarUsuario = async (req, res) => {
     res.redirect("/login");
   } catch (error) {
     res.render("registro", {
-      error: "Error al registrar usuario"
+      error: "Error al registrar usuario", error: error.message
     });
   }
 };
