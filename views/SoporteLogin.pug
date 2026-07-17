@@ -1,0 +1,32 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Iniciar Sesión - Soporte
+    link(rel="stylesheet", href="/styles.css")
+
+  body
+    header
+      h1 Soporte Técnico - Clientes
+
+    if error
+      p(style="color: red") #{error}
+
+    form(action="/soporte/login", method="POST")
+      label Email:
+      input(type="email", name="email", placeholder="ejemplo@correo.com", required)
+
+      br
+      br
+
+      label Password:
+      input(type="password", name="password", placeholder="••••••••", required)
+
+      br
+      br
+
+      button(type="submit") Ingresar al Soporte
+
+    p 
+      a(href="/soporte") 🡰 Volver al Soporte sin iniciar sesión

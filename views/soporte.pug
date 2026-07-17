@@ -1,0 +1,144 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Página de Soporte
+    link(rel="stylesheet" href="/styles.css")
+    // Cargamos Socket.io de manera estática desde el servidor de Node
+    script(src="/socket.io/socket.io.js")
+  body
+    header.main-header
+      h1 Soporte Técnico
+      .header-actions(style="display: flex; align-items: center; gap: 15px;")
+        a(href="/" style="color: #60a5fa;") Volver al Inicio
+        if usuario
+          // Si hay una cuenta activa de cliente, mostramos el botón de cerrar sesión de soporte
+          a.btn-logout(href="/soporte/logout") Cerrar Sesión
+        else
+          // Si no la hay, mostramos el botón de iniciar sesión de soporte
+          a.btn-login(href="/soporte/login") Iniciar Sesión
+
+    main.container
+      if usuario
+        h2 Bienvenido, #{usuario.nombre || usuario.username}!
+        p Esta página de soporte está actualmente en blanco, pero podés usar el chat abajo a la derecha para comunicarte con nosotros.
+      else
+        h2 Soporte Técnico
+        p Esta página está actualmente en blanco. Iniciá sesión para poder utilizar el chat flotante de soporte técnico interactivo.
+
+    // ==========================================
+    // ESTRUCTURA DEL WIDGET FLOTANTE
+    // ==========================================
+    .chat-widget-container
+      // Botón redondo con icono de globo de texto (💬)
+      button#chat-trigger.chat-trigger-btn 💬
+      
+      // Ventana de Chat
+      #chat-window.chat-window
+        .chat-header
+          span Chat de Soporte
+          button#close-chat.close-btn ✕
+        
+        #chat-messages.chat-messages
+          if usuario
+            .message.system ¡Hola #{usuario.nombre || usuario.username}! ¿En qué te podemos ayudar hoy?
+            
+            // Si existen mensajes previos en la base de datos, los renderizamos
+            if mensajesPrevios && mensajesPrevios.length > 0
+              each msg in mensajesPrevios
+                // LÓGICA DE COMPATIBILIDAD:
+                // 1. Si msg.emisor no existe en la DB (mensajes viejos), asumimos que lo mandó el cliente.
+                // 2. Si msg.emisor sí existe, comprobamos que coincida con el nombre del cliente activo.
+                - var esMensajeCliente = !msg.emisor || msg.emisor === usuario.nombre || msg.emisor === usuario.username
+
+                if esMensajeCliente
+                  // Si es del usuario, se muestra a la derecha sin etiqueta de nombre
+                  .message.user #{msg.texto}
+                else
+                  // Si tiene emisor y no es el usuario (es Soporte Técnico o Gemini), va a la izquierda
+                  .message.system #{msg.emisor}: #{msg.texto}
+          else
+            .message.system Para poder enviar mensajes, por favor iniciá sesión.
+
+        .chat-footer
+          if usuario
+            input#chat-input.chat-input(type="text" placeholder="Escribí un mensaje..." autocomplete="off")
+            button#send-btn.chat-send-btn ➤
+          else
+            input#chat-input.chat-input(type="text" placeholder="Iniciá sesión para escribir..." disabled)
+            button#send-btn.chat-send-btn(style="background-color: #9ca3af; cursor: not-allowed;" disabled) ➤
+
+    script.
+      // Inyectamos de forma segura la sesión de backend al frontend
+      // Usamos interpolación de Pug de forma segura convirtiendo a JSON
+      const usuarioActivo = !{usuario ? JSON.stringify(usuario) : 'null'};
+
+      const socket = io();
+
+      const chatTrigger = document.getElementById('chat-trigger');
+      const chatWindow = document.getElementById('chat-window');
+      const closeChat = document.getElementById('close-chat');
+      const chatInput = document.getElementById('chat-input');
+      const sendBtn = document.getElementById('send-btn');
+      const chatMessages = document.getElementById('chat-messages');
+
+      // Alternar visualización del chat al presionar el botón de abajo a la derecha
+      chatTrigger.addEventListener('click', () => {
+        chatWindow.style.display = 'flex';
+        chatTrigger.style.display = 'none';
+        
+        // Al abrir el chat, forzamos el scroll abajo de todo para ver el historial reciente
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        if (chatInput && !chatInput.disabled) {
+          chatInput.focus();
+        }
+      });
+
+      // Cerrar ventana del chat
+      closeChat.addEventListener('click', () => {
+        chatWindow.style.display = 'none';
+        chatTrigger.style.display = 'flex';
+      });
+
+      // Enviar mensaje (Solo si está autenticado)
+      function enviarMensaje() {
+        if (!usuarioActivo) return;
+        
+        const texto = chatInput.value.trim();
+        if (texto === '') return;
+
+        // Mandamos los datos reales del usuario logueado en la base de datos
+        socket.emit('mensaje_chat', {
+          usuarioId: usuarioActivo._id,
+          nombre: usuarioActivo.nombre || usuarioActivo.username,
+          email: usuarioActivo.email,
+          texto: texto
+        });
+
+        chatInput.value = '';
+      }
+
+      if (usuarioActivo) {
+        sendBtn.addEventListener('click', enviarMensaje);
+        chatInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') enviarMensaje();
+        });
+      }
+
+      // Recibir y pintar mensajes en tiempo real
+      socket.on('mensaje_chat', (datos) => {
+        const div = document.createElement('div');
+        
+        // Comparamos el mail del emisor con el mail del cliente actual logueado
+        if (usuarioActivo && datos.email === usuarioActivo.email) {
+          div.className = 'message user';
+          div.textContent = datos.texto;
+        } else {
+          div.className = 'message system';
+          div.textContent = `${datos.nombre}: ${datos.texto}`;
+        }
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll
+      });

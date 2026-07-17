@@ -1,0 +1,254 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Panel de Soporte - Chats Activos
+    link(rel="stylesheet" href="/styles.css")
+    style.
+      /* Ajuste del layout para organizar las dos columnas */
+      .dashboard-layout {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 20px;
+        margin-top: 20px;
+        height: calc(100vh - 180px);
+      }
+
+      /* Forzamos que la caja de mensajes tenga scroll interno y no estire el contenedor */
+      #caja-mensajes {
+        flex: 1;
+        overflow-y: auto;
+        max-height: calc(100vh - 350px); /* Ajusta el espacio restando el header y footer */
+      }
+
+      /* Columna Izquierda: Lista de chats */
+      .chats-sidebar {
+        overflow-y: auto;
+        padding-right: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        border-right: 1px solid #e5e7eb;
+      }
+
+      /* Tarjetas de chat laterales */
+      .chat-card {
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .chat-card:hover {
+        border-color: #3b82f6;
+        background-color: #f8fafc;
+      }
+      .chat-card.activo {
+        border-color: #2563eb;
+        background-color: #eff6ff;
+        box-shadow: 0 0 0 2px #3b82f6;
+      }
+      .chat-card h3 {
+        margin: 0 0 4px 0;
+        font-size: 16px;
+        color: #111827;
+      }
+      .chat-card p {
+        margin: 0 0 8px 0;
+        color: #4b5563;
+        font-size: 13px;
+      }
+      .chat-date-value {
+        color: #9ca3af;
+        font-size: 11px;
+      }
+
+      /* Columna Derecha: Contenedor para simular la ventana de soporte.pug */
+      .right-column-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      /* Estado vacío inicial */
+      .chat-vacio {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        color: #9ca3af;
+        text-align: center;
+        padding: 20px;
+      }
+
+      /* Forzamos que la ventana de chat reutilice sus clases de soporte.pug ocupando el 100% */
+      .right-column-container .chat-window {
+        position: relative !important;
+        bottom: auto !important;
+        right: auto !important;
+        width: 100% !important;
+        height: 100% !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+        display: flex;
+        flex-direction: column;
+      }
+
+  body
+    header
+      h1 Panel de Soporte
+      a.btn-login(href="/") 🡰 Volver al Inicio
+
+    main.container(style="max-width: 1300px; margin: 0 auto; padding: 0 20px;")
+      h2 Chats de Clientes Iniciados
+
+      div.dashboard-layout
+        // --- COLUMNA IZQUIERDA: LISTA DE CHATS ---
+        div.chats-sidebar
+          if chats && chats.length > 0
+            each chat in chats
+              div.chat-card(id=`card-${chat._id}` onclick=`seleccionarChat('${chat._id}', '${chat.usuarioExterno ? chat.usuarioExterno._id : ''}', '${chat.usuarioExterno ? chat.usuarioExterno.nombre : 'Usuario Anónimo'}', '${chat.usuarioExterno ? chat.usuarioExterno.email : 'Sin Registrar'}')`)
+                div
+                  h3 #{chat.usuarioExterno ? chat.usuarioExterno.nombre : 'Usuario Anónimo'}
+                  p #{chat.usuarioExterno ? chat.usuarioExterno.email : 'Sin registrar'}
+                span.chat-date-value Creado el: #{new Date(chat.createdAt).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute:'2-digit' })} hs
+          else
+            div.no-data
+              p No hay ningún chat activo.
+
+        // --- COLUMNA DERECHA: SE ADAPTA A SOPORTE.PUG ---
+        div.right-column-container
+          div#vista-vacia.chat-vacio
+            p Selecciona un chat de la lista de la izquierda para empezar a responder en tiempo real.
+
+          // Esta estructura replica exactamente la de soporte.pug para heredar tus estilos
+          div#vista-activa.chat-window(style="display: none;")
+            .chat-header
+              span#chat-cliente-nombre Chat de Soporte
+              span#chat-cliente-email(style="font-size: 11px; margin-left: auto; opacity: 0.85;") correo@dominio.com
+            
+            #caja-mensajes.chat-messages
+              // Los mensajes se inyectarán de manera dinámica aquí usando tus clases .message.user / .message.system
+
+            .chat-footer
+              input#input-respuesta.chat-input(type="text" placeholder="Escribí una respuesta..." autocomplete="off")
+              button#btn-enviar.chat-send-btn(onclick="enviarRespuesta()") ➤
+
+    footer
+      p &copy; 2026 - Sistema de Gestión de Soporte
+
+    // --- SOCKET.IO & LÓGICA DE ACTUALIZACIÓN ---
+    script(src="/socket.io/socket.io.js")
+    script.
+      const socket = io();
+      let chatActivoId = null;
+      let usuarioExternoId = null;
+      let usuarioNombre = 'Usuario Anónimo';
+
+      // 1. Cargar el historial mediante fetch (AJAX)
+      async function seleccionarChat(id, extId, nombre, email) {
+        chatActivoId = id;
+        usuarioExternoId = extId;
+        usuarioNombre = nombre;
+
+        // Seleccionar tarjeta activa
+        document.querySelectorAll('.chat-card').forEach(card => card.classList.remove('activo'));
+        document.getElementById(`card-${id}`).classList.add('activo');
+
+        // Alternar paneles de visualización
+        document.getElementById('vista-vacia').style.display = 'none';
+        document.getElementById('vista-activa').style.display = 'flex';
+
+        // Actualizar cabecera del chat activo
+        document.getElementById('chat-cliente-nombre').innerText = `Conversación con ${nombre}`;
+        document.getElementById('chat-cliente-email').innerText = email;
+
+        const caja = document.getElementById('caja-mensajes');
+        caja.innerHTML = '<div class="message system" style="text-align: center;">Cargando conversación...</div>';
+
+        try {
+          const response = await fetch(`/soporte/api/chat/${id}`);
+          if (!response.ok) throw new Error("Error");
+          const chat = await response.json();
+
+          caja.innerHTML = ''; // Limpiar cargando...
+
+          if (chat.mensajes && chat.mensajes.length > 0) {
+            chat.mensajes.forEach(msg => {
+              // Si emisor está vacío, tomamos alternativamente "nombre" o dejamos "Cliente" por defecto para evitar undefined
+              const emisorFinal = msg.emisor || msg.nombre || "Cliente";
+              
+              // Si el emisor es el Soporte Técnico o la IA, se mostrará como respuesta a la derecha
+              const esSoporte = emisorFinal === "Soporte Técnico" || emisorFinal.includes("Gemini");
+              agregarMensajeAPantalla(esSoporte, emisorFinal, msg.texto);
+            });
+          } else {
+            caja.innerHTML = '<div class="message system" id="sin-mensajes">No hay mensajes anteriores en este chat.</div>';
+          }
+
+          caja.scrollTop = caja.scrollHeight;
+        } catch (error) {
+          console.error(error);
+          caja.innerHTML = '<div class="message system" style="color: red;">Error al recuperar los mensajes.</div>';
+        }
+      }
+
+      // 2. Enviar respuestas
+      function enviarRespuesta() {
+        const input = document.getElementById('input-respuesta');
+        const texto = input.value.trim();
+        if (!texto || !usuarioExternoId) return;
+
+        const datosMensaje = {
+          usuarioId: usuarioExternoId, 
+          nombre: "Soporte Técnico", 
+          email: "soporte@sistema.com",
+          texto: texto
+        };
+
+        socket.emit('mensaje_chat', datosMensaje);
+        input.value = '';
+      }
+
+      document.getElementById('input-respuesta').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') enviarRespuesta();
+      });
+
+      // 3. Pintar mensaje usando la lógica de clases original (.message.user y .message.system)
+      function agregarMensajeAPantalla(esSoporte, emisor, texto) {
+        const caja = document.getElementById('caja-mensajes');
+        const sinMensajes = document.getElementById('sin-mensajes');
+        if (sinMensajes) sinMensajes.remove();
+
+        const div = document.createElement('div');
+        
+        if (esSoporte) {
+          // El Admin lo ve en su lado derecho usando la clase del cliente de soporte.pug (.message.user)
+          div.className = 'message user';
+          div.textContent = texto;
+        } else {
+          // El mensaje del cliente va con la estructura del emisor (.message.system)
+          div.className = 'message system';
+          div.textContent = `${emisor}: ${texto}`;
+        }
+        
+        caja.appendChild(div);
+        
+        // ◄ AGREGAMOS ESTA LÍNEA: Hace que la caja baje automáticamente al último mensaje
+        caja.scrollTop = caja.scrollHeight; 
+      }
+
+      // 4. Recepción en tiempo real mediante Sockets
+      socket.on('mensaje_chat', (datos) => {
+        // Solo pintar si tenemos abierta la conversación de este cliente
+        if (chatActivoId && datos.usuarioId === usuarioExternoId) {
+          const esSoporte = datos.nombre === "Soporte Técnico" || datos.nombre.includes("Gemini");
+          agregarMensajeAPantalla(esSoporte, datos.nombre, datos.texto);
+        }
+      });

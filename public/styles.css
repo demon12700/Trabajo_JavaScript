@@ -278,3 +278,179 @@
     border-radius: 8px;
     border: 1px solid #e5e7eb;
   }
+
+  /* ==========================================
+   8. WIDGET DE CHAT FLOTANTE
+   ========================================== */
+.chat-widget-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Botón flotante redondo */
+.chat-trigger-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background-color 0.2s;
+}
+
+.chat-trigger-btn:hover {
+  transform: scale(1.05);
+  background-color: #1d4ed8;
+}
+
+/* Ventana de chat */
+.chat-window {
+  display: none; /* Se activa mediante JS */
+  flex-direction: column;
+  position: absolute;
+  bottom: 75px;
+  right: 0;
+  width: 350px;
+  height: 450px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+/* Cabecera */
+.chat-header {
+  background-color: #1f2937;
+  color: white;
+  padding: 15px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header .close-btn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.chat-header .close-btn:hover {
+  color: white;
+}
+
+/* Contenedor de mensajes */
+.chat-messages {
+  flex-grow: 1;
+  padding: 15px;
+  overflow-y: auto;
+  background-color: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Globos de mensaje */
+.message {
+  max-width: 80%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+.message.user {
+  background-color: #2563eb;
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 2px;
+}
+
+.message.system {
+  background-color: #e5e7eb;
+  color: #1f2937;
+  align-self: flex-start;
+  border-bottom-left-radius: 2px;
+}
+
+/* Footer / Input */
+.chat-footer {
+  padding: 10px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 8px;
+  background-color: white;
+}
+
+.chat-input {
+  flex-grow: 1;
+  border: 1px solid #d1d5db;
+  border-radius: 20px;
+  padding: 8px 15px;
+  outline: none;
+  font-size: 14px;
+}
+
+.chat-input:focus {
+  border-color: #2563eb;
+}
+
+.chat-send-btn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-send-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Estilos para los botones del header de soporte */
+.btn-login {
+  color: #38bdf8;
+  border: 1px solid #38bdf8;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-login:hover {
+  background-color: #38bdf8;
+  color: #1f2937;
+  text-decoration: none;
+}
+
+.btn-logout {
+  color: #fca5a5;
+  border: 1px solid #fca5a5;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-logout:hover {
+  background-color: #fca5a5;
+  color: #1f2937;
+  text-decoration: none;
+}
