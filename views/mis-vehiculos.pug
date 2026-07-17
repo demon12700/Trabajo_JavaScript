@@ -9,7 +9,7 @@ html(lang="es")
   body
     header
       h1 Mi Historial de Servicio - Valvú-Express
-      //- Este botón los lleva de vuelta al soporte donde pusiste el botón de redirección
+      //- Este botón los lleva de vuelta al soporte.pug
       a(href="/soporte" class="btn-logout") Volver al Inicio
 
     div(class="container")
@@ -31,7 +31,7 @@ html(lang="es")
             else
               option(value="" disabled) No tienes vehículos registrados con este correo electrónico.
 
-      //- SECCIÓN DETALLES DEL AUTO SELECCIONADO (Sin botones de edición/eliminación)
+      //- SECCIÓN DETALLES DEL AUTO SELECCIONADO
       if autoSeleccionado
         h2 📋 Datos del Vehículo
         table

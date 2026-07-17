@@ -1,9 +1,8 @@
-// MiddleWares/AuthClienteMiddleware.js
 import jwt from "jsonwebtoken";
-import UsuariosExternos from "../models/Usuario_Externo.js"; // Asegurate de que la ruta sea correcta
+import UsuariosExternos from "../models/Usuario_Externo.js";
 
 export const protegerCliente = async (req, res, next) => {
-  // 1. Obtener el token de las cookies (usamos un nombre de cookie diferente, ej: 'token_cliente')
+  // 1. Obtener el token de las cookies
   const { token_cliente } = req.cookies;
 
   if (!token_cliente) {
@@ -16,10 +15,10 @@ export const protegerCliente = async (req, res, next) => {
     const decoded = jwt.verify(token_cliente, process.env.JWT_SECRET);
     
     // 3. Buscar al usuario en la base de datos de externos
-    const usuario = await UsuariosExternos.findById(decoded.id).select("-passwordHash -salt"); //[cite: 46]
+    const usuario = await UsuariosExternos.findById(decoded.id).select("-passwordHash -salt"); 
 
     if (usuario) {
-      req.usuario = usuario; // Se lo inyectamos a la petición[cite: 45]
+      req.usuario = usuario; // Se lo inyectamos a la petición
     } else {
       req.usuario = null;
     }

@@ -1,6 +1,5 @@
-// controllers/soporteControllers.js
 import jwt from "jsonwebtoken";
-// Importamos tu modelo (ajustá la ruta si no es exacta)
+
 import UsuarioExterno from "../../models/Usuario_Externo.js";
 import Chat from "../../models/chats.js";
 import Vehiculo from "../../models/Vehiculo.js"; 
@@ -12,7 +11,7 @@ export const mostrarSoporte = async (req, res) => {
 
         // Si el usuario está logueado, traemos su chat histórico por su ID único de MongoDB
         if (req.usuario) {
-            // CORREGIDO: Buscamos por "usuarioExterno" usando el _id del usuario autenticado
+            //Buscamos un chat Existente con el _id de un usuario externo.
             const chatExistente = await Chat.findOne({ usuarioExterno: req.usuario._id });
             
             if (chatExistente) {
@@ -70,7 +69,6 @@ export const mostrarDashboardSoporte = async (req, res) => {
 
     try {
         // 1. Buscamos en MongoDB SOLO los vehículos cuyo propietario coincida con el email logueado
-        // (Asegurate de que el campo en tu base de datos se llame "emailPropietario")
         const listaVehiculos = await Vehiculo.find({ usrEmail: emailDelUsuarioLogueado });
 
         const placaSeleccionada = req.query.placa || "";
@@ -107,7 +105,6 @@ export const mostrarDashboardSoporte = async (req, res) => {
     }
 };
 
-  // Agregá esto a controllers/soporteControllers.js
 export const obtenerChatAPI = async (req, res) => {
     try {
       const { id } = req.params;
