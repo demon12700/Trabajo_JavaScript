@@ -31,9 +31,16 @@ html(lang="es")
           label(for="placa") Placa (Única):
           input(type="text" id="placa" name="placa" placeholder="Ej: ABC123" required)
 
+        //- CAMBIO AQUÍ: Selección dinámica de Email de Usuario Externo
         div(class="form-group")
-          label(for="email") Email de usuario:
-          input(type="text" id="usrEmail" name="usrEmail" placeholder="Ej: Fulano@gmail.com" required)
+          label(for="usrEmail") Email de usuario:
+          select(id="usrEmail" name="usrEmail" required)
+            option(value="") -- Selecciona un usuario registrado --
+            if usuariosExternos && usuariosExternos.length > 0
+              each usr in usuariosExternos
+                option(value=usr.email) #{usr.nombre} (#{usr.email})
+            else
+              option(value="" disabled) No hay usuarios registrados en el sistema
         
         button(type="submit" class="btn-submit") Guardar Vehículo
 

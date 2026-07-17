@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 // Importamos tu modelo (ajustá la ruta si no es exacta)
 import UsuarioExterno from "../../models/Usuario_Externo.js";
 import Chat from "../../models/chats.js";
+import Vehiculo from "../../models/Vehiculo.js"; 
+import Cambio from "../../models/Cambios.js";
 
 export const mostrarSoporte = async (req, res) => {
     try {
@@ -56,6 +58,54 @@ export const mostrarDashboardSoporte = async (req, res) => {
       res.status(500).send("Error interno del servidor");
     }
   };
+
+  export const mostrarMisVehiculos = async (req, res) => {
+    // Si el middleware "protegerCliente" funcionó, nos deja el usuario en req.usuario
+    if (!req.usuario) {
+        return res.redirect('/soporte/login');
+    }
+
+    const emailDelUsuarioLogueado = req.usuario.email;
+    const nombreUsuario = req.usuario.nombre || req.usuario.username || "Cliente";
+
+    try {
+        // 1. Buscamos en MongoDB SOLO los vehículos cuyo propietario coincida con el email logueado
+        // (Asegurate de que el campo en tu base de datos se llame "emailPropietario")
+        const listaVehiculos = await Vehiculo.find({ usrEmail: emailDelUsuarioLogueado });
+
+        const placaSeleccionada = req.query.placa || "";
+        let autoSeleccionado = null;
+        let cambios = [];
+
+        if (placaSeleccionada) {
+            // 2. Buscamos el auto asegurando que le pertenezca a este cliente
+            autoSeleccionado = await Vehiculo.findOne({ 
+                placa: placaSeleccionada, 
+                usrEmail: emailDelUsuarioLogueado
+            });
+
+            if (autoSeleccionado) {
+                // 3. Cargamos su historial de mantenimiento
+                cambios = await Cambio.find({ placa: autoSeleccionado._id });
+            }
+        }
+
+        // 4. Renderizamos la plantilla que creamos para el cliente
+        res.render('mis-vehiculos', { 
+            pagina: 'Mis Vehículos',
+            usuario: nombreUsuario,
+            emailUsuario: emailDelUsuarioLogueado,
+            listaVehiculos,
+            placaSeleccionada,
+            autoSeleccionado,
+            cambios
+        });
+
+    } catch (error) {
+        console.error("Error al cargar los vehículos del cliente:", error);
+        res.status(500).send("Ocurrió un error al cargar tus vehículos.");
+    }
+};
 
   // Agregá esto a controllers/soporteControllers.js
 export const obtenerChatAPI = async (req, res) => {

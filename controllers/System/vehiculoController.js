@@ -1,12 +1,23 @@
+import UsuarioExterno from "../../models/Usuario_Externo.js";
 import Vehiculo from "../../models/Vehiculo.js";
 import Cambios from "../../models/Cambios.js";
+
 let Eliminar_Cambios = false
 
 //CREAR
 const crearVehiculo = async (req, res) => {
     try {
         console.log("Crear Vehiculo", req.body);
-        const nuevoVehiculo = new Vehiculo(req.body);
+        const { tipo, modelo, color, placa, usrEmail } = req.body;
+
+        const nuevoVehiculo = new Vehiculo({
+            tipo,
+            modelo,
+            color,
+            placa,
+            usrEmail: usrEmail
+        });
+
         const VehiculoGuardado = await nuevoVehiculo.save();
         res.redirect("/vehiculos");
     } catch (error) {
@@ -119,6 +130,26 @@ const mostrarFormularioEditar = async (req, res) => {
     }
 };
 
+// NUEVA FUNCIÓN PARA RENDERIZAR "AgregarDatos.pug" CON LOS USUARIOS Y VEHÍCULOS
+const mostrarFormularioRegistro = async (req, res) => {
+    try {
+        // 1. Buscamos todos los usuarios externos registrados (solo traemos nombre y email)
+        const usuariosExternos = await UsuarioExterno.find({}, "nombre email").sort({ nombre: 1 });
+
+        // 2. Buscamos todos los vehículos registrados para el selector de Cambios/Reparaciones
+        const todosLosVehiculos = await Vehiculo.find().sort({ placa: 1 });
+
+        // 3. Renderizamos la vista pasándole ambas colecciones de datos
+        res.render("AgregarDatos", {
+            usuariosExternos: usuariosExternos,
+            listaVehiculos: todosLosVehiculos
+        });
+    } catch (error) {
+        console.error("Error al cargar la página de registro:", error);
+        res.status(500).send("Error al cargar el formulario de registro: " + error.message);
+    }
+};
+
 const mostrarFormularioEliminar = async (req, res) => {
     try {
         const vehiculoEncontrado = await Vehiculo.findOne({ placa: req.params.placa });
@@ -169,4 +200,5 @@ export {
     mostrarFormularioEditar,
     actualizarVehiculoWeb,
     mostrarFormularioEliminar,
+    mostrarFormularioRegistro
 };

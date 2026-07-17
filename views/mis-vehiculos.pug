@@ -1,0 +1,75 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Mis Vehículos - Valvú-Express
+    link(rel="stylesheet", href="/styles.css")
+
+  body
+    header
+      h1 Mi Historial de Servicio - Valvú-Express
+      //- Este botón los lleva de vuelta al soporte donde pusiste el botón de redirección
+      a(href="/soporte" class="btn-logout") Volver al Inicio
+
+    div(class="container")
+      //- Mostramos el email de la cuenta para que el cliente sepa con qué cuenta inició sesión
+      p Bienvenido, <strong>#{usuario}</strong> (Propietario: <em>#{emailUsuario}</em>)
+
+      //- SECCIÓN DE FILTRADO (Solo mostrará los autos asociados a su email)
+      div(class="filter-section")
+        form(method="GET" action="/mis-vehiculos")
+          label(for="select-placa") 🚗 Selecciona uno de tus vehículos para ver su historial:
+          select(id="select-placa" name="placa" onchange="this.form.submit()")
+            option(value="") -- Selecciona una placa --
+            if listaVehiculos && listaVehiculos.length > 0
+              each auto in listaVehiculos
+                if auto.placa == placaSeleccionada
+                  option(value=auto.placa selected) #{auto.placa} - #{auto.tipo} #{auto.modelo}
+                else
+                  option(value=auto.placa) #{auto.placa} - #{auto.tipo} #{auto.modelo}
+            else
+              option(value="" disabled) No tienes vehículos registrados con este correo electrónico.
+
+      //- SECCIÓN DETALLES DEL AUTO SELECCIONADO (Sin botones de edición/eliminación)
+      if autoSeleccionado
+        h2 📋 Datos del Vehículo
+        table
+          thead
+            tr
+              th Tipo
+              th Modelo
+              th Color
+              th Placa
+              th Propietario
+          tbody
+            tr
+              td #{autoSeleccionado.tipo}
+              td #{autoSeleccionado.modelo}
+              td #{autoSeleccionado.color}
+              td <strong>#{autoSeleccionado.placa}</strong>
+              td= autoSeleccionado.usrEmail
+
+        //- SECCIÓN DE HISTORIAL DE CAMBIOS (Solo lectura)
+        h2 🛠️ Historial de Mantenimientos Realizados
+        if cambios && cambios.length > 0
+          table
+            thead
+              tr
+                th Operación
+                th Parte / Componente
+                th Detalles del Trabajo Realizado
+                th Mecánico Encargado
+            tbody
+              each cambio in cambios
+                tr
+                  td
+                    span(class="badge") #{cambio.tipo}
+                  td #{cambio.parte}
+                  td #{cambio.detalles}
+                  td #{cambio.encargado}
+        else
+          p(class="no-data") ℹ️ Tu vehículo todavía no registra ningún cambio de piezas o mantenimiento en nuestro taller.
+      
+      else
+        p(class="no-data") 💡 Selecciona una de tus patentes en el menú de arriba para ver todo lo que le hicimos a tu auto.

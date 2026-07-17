@@ -5,17 +5,19 @@ import {
     mostrarLoginCliente, 
     autenticarCliente, 
     cerrarSesionCliente,
-    obtenerChatAPI
+    obtenerChatAPI,
+    mostrarMisVehiculos,
+    mostrarDashboardSoporte
 } from '../controllers/User/soporteControllers.js';
 
 import { protegerCliente } from '../MiddleWares/AuthClienteMiddleware.js';
 import { protegerRuta } from '../MiddleWares/AuthMiddleware.js';
-import { mostrarDashboardSoporte } from '../controllers/User/soporteControllers.js';
 
 const router = express.Router();
 
 // Ruta de la pantalla de chat de soporte (Pasa por el middleware para leer la cookie)
 router.get('/soporte', protegerCliente, mostrarSoporte);
+router.get('/mis-vehiculos', protegerCliente, mostrarMisVehiculos);
 
 // Rutas de inicio y cierre de sesión de soporte para clientes
 router.get('/soporte/login', mostrarLoginCliente);

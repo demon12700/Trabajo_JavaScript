@@ -9,12 +9,15 @@ import {
     eliminarVehiculo,
     mostrarFormularioEditar,
     actualizarVehiculoWeb,
-    mostrarFormularioEliminar
+    mostrarFormularioEliminar,
+    mostrarFormularioRegistro
 } from "../controllers/System/vehiculoController.js";
 
 const router = express.Router();
 
 router.get("/", obtenerVehiculos);
+
+router.get("/agregar", mostrarFormularioRegistro);
 
 router.get("/agregar", async (req, res) => {
     try {
@@ -46,6 +49,6 @@ router.post("/editar/:placa", actualizarVehiculoWeb);
 router.get("/:placa", obtenerVehiculoPorID);
 router.post("/", crearVehiculo);
 router.put("/:placa", actualizarVehiculo);
-router.delete("/:placa", eliminarVehiculo); // Mantiene compatibilidad con tu API de pruebas
+router.delete("/:placa", eliminarVehiculo);
 
 export default router;
